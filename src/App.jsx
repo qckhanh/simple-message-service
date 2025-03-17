@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from "react";
 import {faCircleDot, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const socket = io('http://localhost:3000', {
+const socket = io('https://simple-message-service-1.onrender.com', {
     autoConnect: false, // Prevent auto-reconnect
     transports: ["websocket"], // Use WebSocket only
 });
