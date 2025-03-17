@@ -2,7 +2,9 @@
 import io from 'socket.io-client';
 import {useEffect, useState} from "react";
 
-const socket = io('http://localhost:3000');
+// const socket = io('http://localhost:3000');
+const socket = io('https://simple-message-service-1.onrender.com');
+
 
 function App() {
     const [username, setUsername] = useState('');
