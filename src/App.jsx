@@ -110,19 +110,19 @@ function App() {
             </div>
 
             {/* Input Field */}
-            <div className={"text-center text-gray-400 font italic p-2"}>
+            <div className={"fixed bottom-32 left-0 w-full text-center text-gray-400 font italic p-2 text-sm lg:text-xl md:text-lg sm:text-md"}>
                 This product is built by <a href={"https://www.facebook.com/qckhanh2005/"} className={"text-blue-500"}>Quốc Khánh</a>. Any feedback/bug is welcome!
             </div>
-            <div className="text-center text-gray-400 italic p-2">
+            <div className="fixed bottom-22 left-0 w-full text-center text-gray-400 italic p-2 text-sm lg:text-xl md:text-lg sm:text-md">
                 All messages will disappear when you refresh the page.
             </div>
-            <div className="p-4 bg-white flex border-t">
+            <div className="p-4 bg-white flex border-t fixed bottom-0 left-0 w-full">
                 <input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                    className="flex-1 p-2 border-1 border-gray-500 rounded-full p-2 font-semibold"
+                    className="flex-1 p-2 border-1 border-gray-400 rounded-full p-2 font-semibold"
                     placeholder="Type your message... No community guidelines here!"
                 />
                 <button
