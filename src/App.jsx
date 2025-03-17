@@ -1,51 +1,108 @@
 // src/App.jsx
 import io from 'socket.io-client';
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
+import {faCircleDot, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-// const socket = io('http://localhost:3000');
-const socket = io('https://simple-message-service-1.onrender.com');
+const socket = io('http://localhost:3000', {
+    autoConnect: false, // Prevent auto-reconnect
+    transports: ["websocket"], // Use WebSocket only
+});
+// const socket = io('https://simple-message-service-1.onrender.com');
 
 
 function App() {
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [currentOnlineUser, setCurrentOnlineUser] = useState(0);
+    const chatContainerRef = useRef(null);
+    const [isSender, setIsSender] = useState(false); // Track if current user sent a message
+
+    const scrollToBottom = () => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    };
+
 
     useEffect(() => {
+        // Ensure socket only connects once
+        if (!socket.connected) {
+            socket.connect();
+        }
+
         socket.on('assign username', (assignedUsername) => {
             setUsername(assignedUsername);
         });
 
+
+
         const handleMessage = (msg) => {
             setMessages((prevMessages) => [...prevMessages, msg]);
+            playNotificationSound();
+        };
+
+        const handleUserCount = (count) => {
+            setCurrentOnlineUser(count);
+        }
+
+        const playNotificationSound = () => {
+            const audio = new Audio('/public/noti.mp3'); // Load the sound file from public folder
+            audio.play();
         };
 
         socket.on('chat message', handleMessage);
+        socket.on('user count', handleUserCount);
 
         return () => {
             socket.off('chat message', handleMessage);
             socket.off('assign username');
+            socket.off("user count", handleUserCount);
+            socket.disconnect(); // Properly disconnect the socket
         };
     }, []);
+
+    useEffect(() => {
+        if(isSender){
+            scrollToBottom();
+            setIsSender(false);
+        }
+    }, [messages]);
 
     const sendMessage = () => {
         if (message.trim()) {
             socket.emit('chat message', { username, message });
             setMessage('');
+            setIsSender(true);
         }
     };
 
     return (
         <div className="flex flex-col h-screen bg-gray-100">
+            {/* Display Online Users */}
+            <div className={`${socket.connected ? "bg-green-700 " : " bg-red-700"} p-4 bg-green-600 text-white text-center flex flex-row gap-4 justify-center`}>
+                <div>
+                    <FontAwesomeIcon size={"xl"} icon={faCircleDot} beatFade className={`rounded-full ${socket.connected ? "bg-green-700 " : " bg-red-700"}`} />
+                </div>
+                {/*Online:<b>{currentOnlineUser}</b>*/}
+                {socket.connected ? 'Online:  ' + currentOnlineUser : "Server is offline"}
+            </div>
+
             {/* Messages Container */}
-            <div className="flex-1 overflow-auto p-4 space-y-2">
+            <div ref={chatContainerRef} className="flex-1 overflow-auto p-4 space-y-2">
                 {messages.map((msg, index) => {
                     const isSelf = msg.username === username;
 
                     return (
                         <div key={index} className={`flex ${isSelf ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`p-3 rounded-lg max-w-xs ${isSelf ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
-                                <strong>[{isSelf ? "me" : msg.username}]:</strong> {msg.message}
+                            <div>
+                                <div className={`text-gray-600 text-sx ${isSelf ? 'text-right pr-2' : 'text-left pl-2'}`}>
+                                    {isSelf ? "Me" : msg.username}
+                                </div>
+                                <div className={`p-3 rounded-full max-w-fit ${isSelf ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
+                                    {msg.message}
+                                </div>
                             </div>
                         </div>
                     );
@@ -53,83 +110,30 @@ function App() {
             </div>
 
             {/* Input Field */}
+            <div className={"text-center text-gray-400 font italic p-2"}>
+                This product is built by <a href={"https://www.facebook.com/qckhanh2005/"} className={"text-blue-500"}>Quốc Khánh</a>. Any feedback/bug is welcome!
+            </div>
+            <div className="text-center text-gray-400 italic p-2">
+                All messages will disappear when you refresh the page.
+            </div>
             <div className="p-4 bg-white flex border-t">
                 <input
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                    className="flex-1 p-2 border rounded-lg"
-                    placeholder="Type your message..."
+                    className="flex-1 p-2 border-1 border-gray-500 rounded-full p-2 font-semibold"
+                    placeholder="Type your message... No community guidelines here!"
                 />
                 <button
                     onClick={sendMessage}
-                    className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
+                    className="ml-4 p-4 bg-blue-500 text-white rounded-full font-semibold"
                 >
-                    Send
+                    <FontAwesomeIcon size={"xl"} icon={faPaperPlane} />
                 </button>
             </div>
         </div>
     );
 }
-
-
-// function App() {
-//     const [username, setUsername] = useState('');
-//     const [message, setMessage] = useState('');
-//     const [messages, setMessages] = useState([]);
-//
-//     useEffect(() => {
-//         socket.on('assign username', (assignedUsername) => {
-//             setUsername(assignedUsername);
-//         });
-//
-//         const handleMessage = (msg) => {
-//             setMessages((prevMessages) => [...prevMessages, msg]);
-//         };
-//
-//         socket.on('chat message', handleMessage);
-//
-//         return () => {
-//             socket.off('chat message', handleMessage);
-//             socket.off('assign username');
-//         };
-//     }, []);
-//
-//     const sendMessage = () => {
-//         if (message.trim()) {
-//             socket.emit('chat message', { username, message });
-//             setMessage(''); // Clear input, but don't update messages state directly
-//         }
-//     };
-//
-//     return (
-//         <div className="flex flex-col h-screen">
-//             <div className="flex-1 overflow-auto p-4">
-//                 {messages.map((msg, index) => (
-//                     <div key={index} className="mb-2">
-//                         <strong>[{msg.username}]:</strong> {msg.message}
-//                     </div>
-//                 ))}
-//             </div>
-//             <div className="p-4 bg-gray-200 flex">
-//                 <input
-//                     type="text"
-//                     value={message}
-//                     onChange={(e) => setMessage(e.target.value)}
-//                     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-//                     className="flex-1 p-2 border rounded"
-//                     placeholder="Type your message..."
-//                 />
-//                 <button
-//                     onClick={sendMessage}
-//                     className="ml-2 p-2 bg-blue-500 text-white rounded"
-//                 >
-//                     Send
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// }
 
 export default App;
