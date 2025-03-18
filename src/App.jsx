@@ -100,7 +100,7 @@ function App() {
                     <FontAwesomeIcon size={"xl"} icon={faCircleDot} beatFade className={`rounded-full ${socket.connected ? "bg-green-700 " : " bg-red-700"}`} />
                 </div>
                 {/*Online:<b>{currentOnlineUser}</b>*/}
-                {socket.connected ? '111Online:  ' + currentOnlineUser : "Server is offline"}
+                {socket.connected ? 'Online:  ' + currentOnlineUser : "Server is offline"}
             </div>
 
             {/*<PopUp/>*/}
