@@ -93,7 +93,7 @@ function App() {
     return (
         <div className="flex flex-col h-screen bg-gray-100">
             {/* Display Online Users */}
-            <div className={`${socket.connected ? "bg-green-700 " : " bg-red-700"} font-bold p-4 bg-green-600 text-white text-center flex flex-row gap-4 justify-center`}>
+            <div className={`${socket.connected ? "bg-green-700 " : " bg-red-700"} font-bold p-4 bg-green-600 text-white text-center flex flex-row gap-4 justify-center sticky top-0`}>
                 <div>
                     <FontAwesomeIcon size={"xl"} icon={faCircleDot} beatFade className={`rounded-full ${socket.connected ? "bg-green-700 " : " bg-red-700"}`} />
                 </div>
@@ -104,7 +104,7 @@ function App() {
             {/*<PopUp/>*/}
 
             {/* Messages Container */}
-            <div ref={chatContainerRef} className="flex-1 overflow-auto p-4 space-y-2">
+            <div ref={chatContainerRef} className="flex-1 overflow-auto p-4 space-y-2 flex-grow overflow-y-auto">
                 {messages.map((msg, index) => {
                     const isSelf = msg.username === username;
                     const isContinuous = index > 0 && messages[index - 1].username === msg.username;
@@ -134,7 +134,7 @@ function App() {
             {/*<PopUp/>*/}
 
             {/* Input Field */}
-            <div className={"text-center text-gray-400 font italic p-2 text-sm lg:text-xl md:text-lg sm:text-md"}>
+            <div className={"text-center text-gray-400 font italic p-2 text-sm lg:text-xl md:text-lg sm:text-md border-t-1"}>
                 This product is built by <a href={"https://www.facebook.com/qckhanh2005/"} className={"text-blue-500"}>Quốc Khánh</a>. Any feedback/bug is welcome!
             </div>
             <div className="text-center text-gray-400 italic p-2 text-sm lg:text-xl md:text-lg sm:text-md">
