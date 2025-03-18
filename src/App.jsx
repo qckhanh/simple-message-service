@@ -8,8 +8,8 @@ import {BlurFade} from "@/components/magicui/blur-fade.js";
 import BlurText from "@/components/reactbits/blur-text.jsx";
 import { Howl } from 'howler';
 
-const socket = io('http://localhost:3000',{
-// const socket = io('https://simple-message-service-1.onrender.com', {
+// const socket = io('http://localhost:3000',{
+const socket = io('https://simple-message-service-1.onrender.com', {
     autoConnect: false, // Prevent auto-reconnect
     transports: ["websocket"], // Use WebSocket only
 });
