@@ -3,12 +3,21 @@ import io from 'socket.io-client';
 import {useEffect, useRef, useState} from "react";
 import {faCircleDot, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import PopUp from "@/PopUp.jsx";
+import {BlurFade} from "@/components/magicui/blur-fade.js";
+import BlurText from "@/components/reactbits/blur-text.jsx";
 
-const socket = io('https://simple-message-service-1.onrender.com', {
+const socket = io('http://localhost:3000',{
+// const socket = io('https://simple-message-service-1.onrender.com', {
     autoConnect: false, // Prevent auto-reconnect
     transports: ["websocket"], // Use WebSocket only
 });
-// const socket = io('https://simple-message-service-1.onrender.com');
+
+const notificationSound = new Howl({
+    src: ['/noti.mp3'],
+    volume: 1.0, // Ensure full volume
+    html5: true, // Use HTML5 Audio API (better for background tabs)
+});
 
 
 function App() {
@@ -48,8 +57,7 @@ function App() {
         }
 
         const playNotificationSound = () => {
-            const audio = new Audio('/public/noti.mp3'); // Load the sound file from public folder
-            audio.play();
+            notificationSound.play();
         };
 
         socket.on('chat message', handleMessage);
@@ -70,7 +78,10 @@ function App() {
         }
     }, [messages]);
 
+
     const sendMessage = () => {
+        if(!socket.connected) socket.connect();
+
         if (message.trim()) {
             socket.emit('chat message', { username, message });
             setMessage('');
@@ -89,25 +100,37 @@ function App() {
                 {socket.connected ? 'Online:  ' + currentOnlineUser : "Server is offline"}
             </div>
 
+            {/*<PopUp/>*/}
+
             {/* Messages Container */}
             <div ref={chatContainerRef} className="flex-1 overflow-auto p-4 space-y-2">
                 {messages.map((msg, index) => {
                     const isSelf = msg.username === username;
+                    const isContinuous = index > 0 && messages[index - 1].username === msg.username;
 
                     return (
                         <div key={index} className={`flex ${isSelf ? 'justify-end' : 'justify-start'}`}>
                             <div>
+                                {!isContinuous && (
                                 <div className={`text-gray-600 text-sx ${isSelf ? 'text-right pr-2' : 'text-left pl-2'}`}>
                                     {isSelf ? "Me" : msg.username}
-                                </div>
-                                <div className={`p-3 rounded-full max-w-fit ${isSelf ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
-                                    {msg.message}
+                                </div>)}
+                                {/*max-w-xs mb-2 py-2 px-3 bg-gray-200 rounded-xl rounded-bl-none*/}
+                                {/*p-3 rounded-full max-w-fit ${isSelf ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}*/}
+                                <div className={`inline-block max-w-md mb-2 py-2 px-3 rounded-2xl ${isSelf ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-300 text-black rounded-bl-none'}`}>
+                                    <BlurFade delay={0.2} inView={false}>
+                                        <div className={"font-semibold"}>
+                                            {msg.message}
+                                        </div>
+                                    </BlurFade >
                                 </div>
                             </div>
                         </div>
                     );
                 })}
             </div>
+
+            {/*<PopUp/>*/}
 
             {/* Input Field */}
             <div className={"text-center text-gray-400 font italic p-2 text-sm lg:text-xl md:text-lg sm:text-md"}>
