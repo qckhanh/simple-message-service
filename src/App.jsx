@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopUp from "@/PopUp.jsx";
 import {BlurFade} from "@/components/magicui/blur-fade.js";
 import BlurText from "@/components/reactbits/blur-text.jsx";
+import { Howl } from 'howler';
 
 const socket = io('http://localhost:3000',{
 // const socket = io('https://simple-message-service-1.onrender.com', {
@@ -35,7 +36,7 @@ function App() {
     };
 
 
-    useEffect(() => {
+    useEffect(message => {
         // Ensure socket only connects once
         if (!socket.connected) {
             socket.connect();
@@ -92,7 +93,7 @@ function App() {
     return (
         <div className="flex flex-col h-screen bg-gray-100">
             {/* Display Online Users */}
-            <div className={`${socket.connected ? "bg-green-700 " : " bg-red-700"} p-4 bg-green-600 text-white text-center flex flex-row gap-4 justify-center`}>
+            <div className={`${socket.connected ? "bg-green-700 " : " bg-red-700"} font-bold p-4 bg-green-600 text-white text-center flex flex-row gap-4 justify-center`}>
                 <div>
                     <FontAwesomeIcon size={"xl"} icon={faCircleDot} beatFade className={`rounded-full ${socket.connected ? "bg-green-700 " : " bg-red-700"}`} />
                 </div>
@@ -137,7 +138,7 @@ function App() {
                 This product is built by <a href={"https://www.facebook.com/qckhanh2005/"} className={"text-blue-500"}>Quốc Khánh</a>. Any feedback/bug is welcome!
             </div>
             <div className="text-center text-gray-400 italic p-2 text-sm lg:text-xl md:text-lg sm:text-md">
-                All messages will disappear when you refresh the page.
+                All messages will be disappeared when you refresh the page.
             </div>
             <div className="p-4 bg-white flex border-t">
                 <input
