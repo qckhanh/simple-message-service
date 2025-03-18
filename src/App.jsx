@@ -100,13 +100,13 @@ function App() {
                     <FontAwesomeIcon size={"xl"} icon={faCircleDot} beatFade className={`rounded-full ${socket.connected ? "bg-green-700 " : " bg-red-700"}`} />
                 </div>
                 {/*Online:<b>{currentOnlineUser}</b>*/}
-                {socket.connected ? 'Online:  ' + currentOnlineUser : "Server is offline"}
+                {socket.connected ? '111Online:  ' + currentOnlineUser : "Server is offline"}
             </div>
 
             {/*<PopUp/>*/}
 
             {/* Messages Container */}
-            <div ref={chatContainerRef} className="flex-1 overflow-auto p-4 space-y-2 flex-grow overflow-y-auto">
+            <div ref={chatContainerRef} className="mt-4 flex-1 overflow-auto p-4 space-y-2 flex-grow overflow-y-auto">
                 {messages.map((msg, index) => {
                     const isSelf = msg.username === username;
                     const isContinuous = index > 0 && messages[index - 1].username === msg.username;
