@@ -90,6 +90,8 @@ function App() {
         }
     };
 
+
+
     return (
         <div className="flex flex-col h-screen bg-gray-100">
             {/* Display Online Users */}
@@ -134,7 +136,7 @@ function App() {
             {/*<PopUp/>*/}
 
             {/* Input Field */}
-            <div className={"text-center text-gray-400 font italic p-2 text-sm lg:text-xl md:text-lg sm:text-md border-t-1"}>
+            <div className={"sticky bottom-0 text-center text-gray-400 font italic p-2 text-sm lg:text-xl md:text-lg sm:text-md border-t-1"}>
                 This product is built by <a href={"https://www.facebook.com/qckhanh2005/"} className={"text-blue-500"}>Quốc Khánh</a>. Any feedback/bug is welcome!
             </div>
             <div className="text-center text-gray-400 italic p-2 text-sm lg:text-xl md:text-lg sm:text-md">
