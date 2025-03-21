@@ -1,7 +1,7 @@
 // src/App.jsx
 import io from 'socket.io-client';
 import {useEffect, useRef, useState} from "react";
-import {faCircleDot, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import {faArrowDown, faCircleArrowDown, faCircleDot, faImage, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopUp from "@/PopUp.jsx";
 import {BlurFade} from "@/components/magicui/blur-fade.js";
@@ -10,7 +10,7 @@ import { Howl } from 'howler';
 
 // const socket = io('http://localhost:3000',{
 const socket = io('https://simple-message-service-1.onrender.com', {
-    autoConnect: false, // Prevent auto-reconnect
+    autoConnect: true, // Prevent auto-reconnect
     transports: ["websocket"], // Use WebSocket only
 });
 
@@ -36,12 +36,14 @@ function App() {
     };
 
 
-    useEffect(message => {
+    //initial connection
+    useEffect( () => {
         // Ensure socket only connects once
         if (!socket.connected) {
             socket.connect();
         }
 
+        //listen from server ( backend)
         socket.on('assign username', (assignedUsername) => {
             setUsername(assignedUsername);
         });
@@ -81,13 +83,34 @@ function App() {
 
 
     const sendMessage = () => {
-        if(!socket.connected) socket.connect();
+        if(!socket.connected){
+            socket.connect();
+            return;
+        }
 
         if (message.trim()) {
-            socket.emit('chat message', { username, message });
+            socket.emit('chat message', { username, message, type: "text" });
             setMessage('');
             setIsSender(true);
         }
+    };
+
+    const MB = 1024 * 1024;
+    const sendImage = (event) => {
+        const selectedImage = event.target.files[0];
+        if(!selectedImage || selectedImage.size > 8 * MB ){
+            alert("Please select an image less than 8MB");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.readAsDataURL(selectedImage);
+        reader.onload = () => {
+            const image = reader.result;
+            socket.emit('chat message', { username, message: image, type: "image"});
+            setIsSender(true);
+        };
     };
 
 
@@ -120,13 +143,26 @@ function App() {
                                 </div>)}
                                 {/*max-w-xs mb-2 py-2 px-3 bg-gray-200 rounded-xl rounded-bl-none*/}
                                 {/*p-3 rounded-full max-w-fit ${isSelf ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}*/}
-                                <div className={`inline-block max-w-md mb-2 py-2 px-3 rounded-2xl ${isSelf ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-300 text-black rounded-bl-none'}`}>
-                                    <BlurFade delay={0.2} inView={false}>
-                                        <div className={"font-semibold"}>
-                                            {msg.message}
+                                {msg.type === "text" ? (
+                                    <div className={`inline-block max-w-md mb-2 py-2 px-3 rounded-2xl ${isSelf ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-300 text-black rounded-bl-none'}`}>
+                                        <BlurFade delay={0.2} inView={false}>
+                                            <div className={"font-semibold"}>
+                                                {msg.message}
+                                            </div>
+                                        </BlurFade >
+                                    </div>
+                                ) : (
+                                    <div className={`flex ${isSender ? ' flex-row' : 'flex-row-reverse'} gap-3 items-center`}>
+                                        {/*<FontAwesomeIcon className={"text-blue-700"} icon={faCircleArrowDown} size="xl" />*/}
+                                        <div className={`inline-flex w-auto mb-2 py-3 px-3 rounded-2xl ${isSelf ? 'bg-gray-200 text-white rounded-br-none' : 'bg-gray-300 text-black rounded-bl-none'}`}>
+
+                                            <BlurFade delay={0.3} inView={false}>
+                                                    <img alt={"error"} className={"rounded-lg m-1 w-xs"} src={msg.message} />
+                                            </BlurFade >
                                         </div>
-                                    </BlurFade >
-                                </div>
+                                    </div>
+                                )}
+
                             </div>
                         </div>
                     );
@@ -142,6 +178,7 @@ function App() {
             <div className="text-center text-gray-400 italic p-2 text-sm lg:text-xl md:text-lg sm:text-md">
                 All messages will be disappeared when you refresh the page.
             </div>
+
             <div className="p-4 bg-white flex border-t">
                 <input
                     type="text"
@@ -151,9 +188,19 @@ function App() {
                     className="flex-1 p-2 border-1 border-gray-400 rounded-full p-2 font-semibold"
                     placeholder="Type your message... No community guidelines here!"
                 />
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={sendImage}
+                    className="hidden"
+                    id="imageUpload"
+                />
+                <label htmlFor={"imageUpload"} className={"ml-4 p-4 bg-orange-500 text-white rounded-full font-semibold hover:bg-orange-600"}>
+                    <FontAwesomeIcon size={"xl"} icon={faImage} />
+                </label>
                 <button
                     onClick={sendMessage}
-                    className="ml-4 p-4 bg-blue-500 text-white rounded-full font-semibold"
+                    className="ml-4 p-4 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600"
                 >
                     <FontAwesomeIcon size={"xl"} icon={faPaperPlane} />
                 </button>
