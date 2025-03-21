@@ -155,10 +155,11 @@ function App() {
                                     <div className={`flex ${isSender ? ' flex-row' : 'flex-row-reverse'} gap-3 items-center`}>
                                         {/*<FontAwesomeIcon className={"text-blue-700"} icon={faCircleArrowDown} size="xl" />*/}
                                         <div className={`inline-flex w-auto mb-2 py-3 px-3 rounded-2xl ${isSelf ? 'bg-gray-200 text-white rounded-br-none' : 'bg-gray-300 text-black rounded-bl-none'}`}>
+                                            <img alt={"error"} className={"rounded-lg m-1 w-xs"} src={msg.message} />
 
-                                            <BlurFade delay={0.3} inView={false}>
-                                                    <img alt={"error"} className={"rounded-lg m-1 w-xs"} src={msg.message} />
-                                            </BlurFade >
+                                            {/*<BlurFade delay={0.3} inView={false}>*/}
+                                            {/*        <img alt={"error"} className={"rounded-lg m-1 w-xs"} src={msg.message} />*/}
+                                            {/*</BlurFade >*/}
                                         </div>
                                     </div>
                                 )}
