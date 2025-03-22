@@ -145,11 +145,15 @@ function App() {
                                 {/*p-3 rounded-full max-w-fit ${isSelf ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}*/}
                                 {msg.type === "text" ? (
                                     <div className={`inline-block max-w-md mb-2 py-2 px-3 rounded-2xl ${isSelf ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-300 text-black rounded-bl-none'}`}>
-                                        <BlurFade delay={0.2} inView={false}>
-                                            <div className={"font-semibold"}>
-                                                {msg.message}
-                                            </div>
-                                        </BlurFade >
+                                        {/*<BlurFade delay={0.2} inView={false}>*/}
+                                        {/*    <div className={"font-semibold"}>*/}
+                                        {/*        {msg.message}*/}
+                                        {/*    </div>*/}
+                                        {/*</BlurFade >*/}
+
+                                        <div className={"font-semibold"}>
+                                            {msg.message}
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className={`flex ${isSender ? ' flex-row' : 'flex-row-reverse'} gap-3 items-center`}>
