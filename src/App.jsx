@@ -9,7 +9,7 @@ import BlurText from "@/components/reactbits/blur-text.jsx";
 import { Howl } from 'howler';
 
 // const socket = io('http://localhost:3000',{
-const socket = io('https://simple-message-service-1.onrender.com', {
+const socket = io('https://simple-message-service.onrender.com', {
     autoConnect: true, // Prevent auto-reconnect
     transports: ["websocket"], // Use WebSocket only
 });
